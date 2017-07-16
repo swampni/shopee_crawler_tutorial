@@ -12,8 +12,9 @@ driver.get(
     'https://shopee.tw/%E9%9B%BB%E8%85%A6%E5%91%A8%E9%82%8A%E8%80%97%E6%9D%90-cat.69')  # 瀏覽我們要的網頁
 cookie = ';'.join(['{}={}'.format(item['name'], item['value'])  # 抓cookie
                    for item in driver.get_cookies()])
-token = [item['value']  #抓csrf token
-             for item in driver.get_cookies() if item['name'] == 'csrftoken'][0]
+# token = [item['value']  #抓csrf token  影片裡的方法
+#              for item in driver.get_cookies() if item['name'] == 'csrftoken'][0]
+token = driver.get_cookie('csrftoken')['value']  #抓csrf token 我個人覺得更好的方法
 driver.quit()
 # 把headers用字典形式表示，簡單明瞭
 

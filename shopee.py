@@ -2,7 +2,7 @@ import requests
 import json
 import pandas
 from selenium import webdriver
-
+from time import sleep
 
 def get_id(pages, new=0):
     '''
@@ -29,19 +29,13 @@ def get_page(url, pages):
     用post傳json去
     得到物品資料
     '''
-    flag = True
-    while flag:
-        driver = webdriver.Chrome('D:\code\ceiba\driver\chromedriver.exe')  #initiate chrome
-        driver.get(url)
-        cookie = ';'.join(['{}={}'.format(item['name'], item['value'])  #抓cookie
-                        for item in driver.get_cookies()])
-        try:
-            token = [item['value']  #抓csrf token
-                    for item in driver.get_cookies() if item['name'] == 'csrftoken'][0]
-            flag = False
-        except IndexError:
-            driver.quit()    
-
+    driver = webdriver.Chrome('D:\code\ceiba\driver\chromedriver.exe')  #initiate chrome
+    driver.get(url)
+    sleep(1)    #給他一點時間載入 不然好像會壞掉QQ
+    cookie = ';'.join(['{}={}'.format(item['name'], item['value'])  #抓cookie
+                for item in driver.get_cookies()])
+    token = driver.get_cookie('csrftoken')['value']          
+    driver.quit()
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
         'x-csrftoken': token,
@@ -68,8 +62,8 @@ def get_page(url, pages):
 
 
 if __name__ == '__main__':
-    url = 'https://shopee.tw/%E9%9B%BB%E8%85%A6%E5%91%A8%E9%82%8A%E8%80%97%E6%9D%90-cat.69'
-    for i in get_page(url, 100):
+    url = 'https://shopee.tw/3C%E7%9B%B8%E9%97%9C-cat.69'
+    for i in get_page(url, 20):
         for r in i:
             print('******************************************************')
             print(r['name'], r['price'])
